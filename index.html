@@ -1,1 +1,1451 @@
+<!DOCTYPE html>
+<html lang="bn" dir="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#080604">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>গল্পবলিয়ের খেরোর খাতা</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Courier+Prime&family=Hind+Siliguri:wght@300;400;600&family=Noto+Serif+Bengali:wght@400;700;800&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ink:               #080604;
+            --parchment-dark:    #100d09;
+            --parchment-mid:     #18130e;
+            --parchment-light:   #221a12;
+            --border-dim:        #2a1f14;
+            --border-glow:       #5c3d1e;
+            --gold:              #c8932a;
+            --gold-light:        #e8b84b;
+            --gold-dim:          #7a5518;
+            --crimson:           #8b1a1a;
+            --crimson-bright:    #c0392b;
+            --ash:               #8a7a6a;
+            --smoke:             #5a4e42;
+            --text-primary:      #e8dcc8;
+            --text-secondary:    #a89880;
+            --text-muted:        #6a5a4a;
+
+            --audio-amber:       #7a4a0a;
+            --audio-amber-bright:#c8821a;
+            --novel-indigo:      #2a2a6b;
+            --novel-indigo-bright:#5a5ab8;
+            --video-teal:        #0a4a4a;
+            --video-teal-bright: #2a9b9b;
+            --shorts-rose:       #6b1a2a;
+            --shorts-rose-bright:#b83a5a;
+
+            --font-bn-serif: 'Noto Serif Bengali', serif;
+            --font-bn-sans: 'Hind Siliguri', sans-serif;
+            --font-en-display: 'Cinzel Decorative', cursive;
+            --font-en-body: 'IM Fell English', serif;
+            --font-mono: 'Courier Prime', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--ink); color: var(--text-primary);
+            font-family: var(--font-bn-sans); line-height: 1.6;
+            height: 100vh; overflow: hidden; display: flex; position: relative;
+            /* Custom Quill Cursor */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23c8932a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
+        }
+
+        /* Deep Atmosphere & Grain Texture */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9999; opacity: 0.05;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="1"/></svg>');
+        }
+
+        .ambient-glow {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0;
+            background: radial-gradient(circle at 10% 90%, rgba(200, 147, 42, 0.04) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 10%, rgba(139, 26, 26, 0.03) 0%, transparent 50%);
+        }
+
+        /* Ornate Scrollbars */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--parchment-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+        /* Typography Classes */
+        .serif-bn { font-family: var(--font-bn-serif); font-weight: 700; }
+        .sans-bn { font-family: var(--font-bn-sans); }
+        .display-en { font-family: var(--font-en-display); font-weight: 700; }
+        .body-en { font-family: var(--font-en-body); }
+        .mono { font-family: var(--font-mono); }
+
+        #app { display: flex; width: 100%; height: 100%; position: relative; z-index: 1; }
+
+        /* --- ZONE 1: LEFT SIDEBAR --- */
+        #sidebar {
+            width: 280px; background: var(--parchment-dark); border-right: 1px solid var(--border-dim);
+            display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
+        }
+
+        .sidebar-header { padding: 30px 20px 16px; text-align: center; }
+        .app-title { font-size: 24px; color: var(--gold); text-shadow: 0 0 12px rgba(200, 147, 42, 0.25); letter-spacing: 0.5px; }
+        .app-subtitle { font-size: 13px; color: var(--ash); font-style: italic; margin-top: 4px; }
+        
+        .alpona-divider {
+            margin: 16px auto; width: 80%; height: 12px; opacity: 0.6;
+            background: url('data:image/svg+xml;utf8,<svg width="100" height="12" viewBox="0 0 100 12" xmlns="http://www.w3.org/2000/svg"><path d="M0 6h20l5-5 5 5 5-5 5 5h20l5-5 5 5 5-5 5 5h20" fill="none" stroke="%238a7a6a" stroke-width="1"/></svg>') center/contain no-repeat;
+        }
+
+        .nav-menu { flex: 1; overflow-y: auto; padding: 10px 0; }
+        .nav-item {
+            display: flex; align-items: center; padding: 12px 20px; cursor: pointer; color: var(--text-secondary);
+            text-decoration: none; transition: all 0.2s ease; border-left: 2px solid transparent; margin-bottom: 2px;
+        }
+        .nav-item:hover, .nav-item.active { background: rgba(200, 147, 42, 0.05); color: var(--text-primary); padding-left: 24px; }
+        .nav-item svg { width: 18px; height: 18px; margin-right: 12px; opacity: 0.8; }
+        
+        .nav-item[data-view="dashboard"] { border-left-color: var(--gold); }
+        .nav-item[data-view="audiobook"] { border-left-color: var(--audio-amber); }
+        .nav-item[data-view="novel"] { border-left-color: var(--novel-indigo); }
+        .nav-item[data-view="video"] { border-left-color: var(--video-teal); }
+        .nav-item[data-view="shorts"] { border-left-color: var(--shorts-rose); }
+        .nav-item[data-view="tasks"] { border-left-color: var(--gold); }
+        .nav-item[data-view="settings"] { border-left-color: var(--ash); }
+
+        .nav-label-bn { font-family: var(--font-bn-serif); font-size: 16px; font-weight: 700; display: block; }
+        .nav-label-en { font-family: var(--font-en-body); font-size: 12px; color: var(--smoke); display: block; font-style: italic;}
+
+        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border-dim); font-size: 13px; text-align: center; color: var(--ash); font-style: italic; line-height: 1.5;}
+
+        /* --- ZONE 2: MAIN CONTENT AREA --- */
+        #main-content { flex: 1; display: flex; flex-direction: column; background: var(--ink); position: relative; overflow-y: auto; overflow-x: hidden; }
+
+        .view-container { display: none; padding: 40px; animation: fadeInDrift 0.4s ease-out forwards; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .view-container.active { display: block; }
+
+        @keyframes fadeInDrift { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* General Card Styling */
+        .card {
+            background: var(--parchment-mid); border: 1px solid var(--border-dim); border-radius: 2px; padding: 24px;
+            box-shadow: inset 0 1px 0 rgba(255,220,150,0.04), 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s ease; position: relative;
+        }
+        .card:hover { border-color: var(--border-glow); transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,220,150,0.06), 0 8px 16px rgba(0,0,0,0.4); }
+        
+        .type-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .bg-audiobook { background: var(--audio-amber); }
+        .bg-novel { background: var(--novel-indigo); }
+        .bg-video { background: var(--video-teal); }
+        .bg-shorts { background: var(--shorts-rose); }
+
+        /* Buttons & Inputs */
+        .btn {
+            background: transparent; color: var(--text-primary); border: 1px solid var(--border-dim); padding: 8px 16px; border-radius: 2px;
+            font-family: var(--font-bn-sans); cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600;
+        }
+        .btn-gold { background: rgba(200, 147, 42, 0.1); border-color: var(--gold-dim); color: var(--gold); }
+        .btn-gold:hover { background: rgba(200, 147, 42, 0.2); border-color: var(--gold); box-shadow: inset 0 0 10px rgba(200,147,42,0.1); }
+        .btn-ghost { border-style: dashed; color: var(--ash); border-color: var(--smoke); }
+        .btn-ghost:hover { background: rgba(255,255,255,0.02); color: var(--text-primary); border-color: var(--ash); }
+        .btn-danger { color: var(--crimson); border-color: rgba(139, 26, 26, 0.4); }
+        .btn-danger:hover { background: rgba(139, 26, 26, 0.1); color: var(--crimson-bright); border-color: var(--crimson); }
+
+        input, select, textarea {
+            background: var(--ink); border: 1px solid var(--border-dim); color: var(--text-primary); padding: 12px 14px;
+            border-radius: 2px; font-family: inherit; width: 100%; margin-bottom: 16px; transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold-dim); box-shadow: inset 0 0 5px rgba(200,147,42,0.05); }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--ash); }
+
+        /* Status & Deadline Badges */
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; border: 1px solid; }
+        .badge-draft { background: rgba(138, 122, 106, 0.1); color: var(--ash); border-color: var(--ash); }
+        .badge-progress { background: rgba(200, 147, 42, 0.1); color: var(--gold); border-color: var(--gold-dim); }
+        .badge-review { background: rgba(42, 155, 155, 0.1); color: var(--video-teal-bright); border-color: var(--video-teal); }
+        .badge-complete { background: rgba(42, 107, 42, 0.1); color: #4a9b4a; border-color: #2a6b2a; }
+        
+        .deadline-safe { color: #4a9b4a; }
+        .deadline-warn { color: var(--audio-amber-bright); }
+        .deadline-danger { color: var(--crimson-bright); animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        /* Dashboard Specific */
+        .watermark { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 45vh; font-family: var(--font-bn-serif); color: rgba(255,255,255,0.02); pointer-events: none; z-index: 0; user-select: none; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-value { font-size: 36px; line-height: 1; margin-bottom: 8px; color: var(--gold); }
+        
+        /* Editor Specific */
+        .editor-layout { display: flex; height: calc(100vh - 120px); gap: 24px; }
+        .tree-panel { width: 320px; background: var(--parchment-dark); border: 1px solid var(--border-dim); display: flex; flex-direction: column; border-radius: 2px; }
+        .editor-panel { flex: 1; background: var(--parchment-mid); border: 1px solid var(--border-dim); display: flex; flex-direction: column; position: relative; border-radius: 2px; box-shadow: inset 0 1px 0 rgba(255,220,150,0.02); }
+
+        /* Project Info & Tree */
+        .project-info-panel { padding: 16px; border-bottom: 1px solid var(--border-dim); background: var(--parchment-light); }
+        .tree-header { padding: 12px 16px; border-bottom: 1px solid var(--border-dim); display:flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+        .tree-item { padding: 8px 16px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: var(--text-secondary); font-size: 14px; border-left: 2px solid transparent; }
+        .tree-item:hover { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+        .tree-item.active { background: rgba(200, 147, 42, 0.05); color: var(--gold); border-left-color: var(--gold); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--smoke); }
+        .status-dot.half { background: var(--smoke); }
+        .status-dot.full { background: var(--gold); border-color: var(--gold); }
+
+        /* Rich Text Editor Toolbar & Content */
+        .editor-toolbar { padding: 10px 16px; border-bottom: 1px solid var(--border-dim); display: flex; flex-wrap: wrap; gap: 8px; background: var(--parchment-light); align-items: center; }
+        .editor-toolbar button { background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 6px 10px; cursor: pointer; border-radius: 2px; font-family: var(--font-bn-sans); font-size: 13px; display: flex; align-items: center; gap: 4px; }
+        .editor-toolbar button:hover { background: rgba(255,255,255,0.05); border-color: var(--smoke); color: var(--gold); }
+        .toolbar-divider { width: 1px; height: 20px; background: var(--border-dim); margin: 0 4px; }
+        
+        .editor-content-wrapper { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+        .editor-content { flex: 1; padding: 40px 60px; outline: none; font-size: 16px; transition: font-family 0.3s; min-height: 500px; }
+        .editor-content[data-placeholder]:empty:before { content: attr(data-placeholder); color: var(--text-muted); font-style: italic; cursor: text; }
+        
+        /* Language Toggles */
+        .editor-content.lang-bn { font-family: var(--font-bn-serif); line-height: 1.9; }
+        .editor-content.lang-en { font-family: var(--font-en-body); line-height: 1.7; font-size: 18px; }
+
+        /* Block Formats */
+        .editor-content blockquote.dialogue {
+            border-left: 2px solid var(--gold-dim); margin: 20px 0 20px 40px; padding: 10px 0 10px 20px;
+            color: var(--text-primary); background: linear-gradient(90deg, rgba(200, 147, 42, 0.05) 0%, transparent 100%);
+        }
+        .editor-content .direction { font-style: italic; color: var(--ash); font-size: 0.9em; margin: 16px 0; text-align: center; }
+        .editor-content .note { background: rgba(200, 130, 26, 0.1); border: 1px dashed var(--audio-amber-bright); color: var(--audio-amber-bright); padding: 8px 12px; margin: 16px 0; font-size: 0.85em; }
+        .editor-content .sound-cue { font-family: var(--font-mono); color: var(--video-teal-bright); background: rgba(10, 74, 74, 0.4); padding: 2px 8px; border-radius: 2px; font-size: 0.85em; letter-spacing: 0.5px; }
+
+        /* Editor Task List Bottom */
+        .editor-tasks { border-top: 1px solid var(--border-dim); background: var(--parchment-dark); padding: 20px; }
+        .task-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .task-item.done span { text-decoration: line-through; color: var(--smoke); }
+        .task-checkbox { appearance: none; width: 16px; height: 16px; border: 1px solid var(--gold-dim); border-radius: 2px; cursor: pointer; position: relative; }
+        .task-checkbox:checked { background: var(--gold-dim); }
+        .task-checkbox:checked::after { content: '✓'; position: absolute; color: var(--ink); font-size: 12px; top: -1px; left: 2px; font-weight: bold; }
+
+        /* Master Tasks specific */
+        .task-filter-bar { display: flex; gap: 10px; margin-bottom: 24px; background: var(--parchment-mid); padding: 16px; border: 1px solid var(--border-dim); border-radius: 2px; }
+
+        /* --- ZONE 3: AI DRAWER --- */
+        #ai-trigger {
+            position: fixed; bottom: 40px; right: 40px; width: 60px; height: 60px; border-radius: 50%;
+            background: var(--parchment-dark); border: 2px solid var(--gold-dim); color: var(--gold);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 15px rgba(200,147,42,0.15); z-index: 900; transition: all 0.3s;
+        }
+        #ai-trigger:hover { transform: scale(1.08); border-color: var(--gold); box-shadow: 0 6px 25px rgba(0,0,0,0.8), 0 0 20px rgba(200,147,42,0.3); }
+
+        #ai-drawer {
+            position: fixed; top: 0; right: 0; width: 60%; height: 100vh; background: var(--parchment-dark);
+            border-left: 1px solid var(--border-glow); box-shadow: -10px 0 40px rgba(0,0,0,0.8);
+            transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1000; display: flex; flex-direction: column;
+        }
+        #ai-drawer.open { transform: translateX(0); }
+        
+        .ai-header { padding: 24px; border-bottom: 1px solid var(--border-dim); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); }
+        .context-selector { margin-top: 12px; display: flex; align-items: center; gap: 10px; }
+        
+        .ai-body { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+        .ai-footer { padding: 20px 24px; border-top: 1px solid var(--border-dim); background: var(--parchment-mid); }
+        
+        .ai-msg { max-width: 85%; padding: 14px 18px; border-radius: 4px; line-height: 1.6; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .msg-user { align-self: flex-end; background: rgba(200, 147, 42, 0.08); border: 1px solid var(--gold-dim); color: var(--gold-light); border-bottom-right-radius: 0; }
+        .msg-ai { align-self: flex-start; background: var(--parchment-light); border: 1px solid var(--border-dim); border-bottom-left-radius: 0; }
+        
+        .ai-prompts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+        .prompt-pill { background: var(--ink); border: 1px solid var(--border-dim); padding: 8px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; color: var(--ash); transition: all 0.2s; text-align: left; display: flex; align-items: center; gap: 6px; }
+        .prompt-pill:hover { border-color: var(--gold-dim); color: var(--gold); background: rgba(200,147,42,0.05); }
+
+        .ai-input-area { display: flex; gap: 12px; align-items: flex-end; }
+        .ai-textarea { flex: 1; height: 80px; margin-bottom: 0; resize: none; }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 6, 4, 0.85); backdrop-filter: blur(3px);
+            display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .modal {
+            background: var(--parchment-dark); border: 1px solid var(--border-glow); padding: 32px; border-radius: 2px;
+            width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative; transform: scale(0.96); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal::before { content: ''; position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid rgba(200, 147, 42, 0.1); pointer-events: none; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .full-width { grid-column: 1 / -1; }
+
+        /* Empty States */
+        .empty-state { text-align: center; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+        .empty-icon { opacity: 0.2; margin-bottom: 10px; }
+        .empty-text { color: var(--ash); font-family: var(--font-bn-serif); font-style: italic; font-size: 18px; }
+
+        /* Mobile Adjustments */
+        #mobile-header { display: none; }
+        @media (max-width: 768px) {
+            #sidebar { position: fixed; height: 100vh; transform: translateX(-100%); width: 85%; }
+            #sidebar.open { transform: translateX(0); }
+            #mobile-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: var(--parchment-dark); border-bottom: 1px solid var(--border-dim); }
+            .editor-layout { flex-direction: column; height: auto; }
+            .tree-panel { width: 100%; max-height: 250px; }
+            .editor-panel { min-height: 60vh; }
+            .editor-content { padding: 20px; }
+            #ai-drawer { width: 100%; border-left: none; }
+            #ai-trigger { bottom: 20px; right: 20px; width: 50px; height: 50px; }
+            .view-container { padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+
+    <div id="mobile-header">
+        <button class="btn btn-ghost" style="padding: 6px; border: none;" onclick="toggleSidebar()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <span class="display-en text-gold" style="font-size: 16px;">Kheror Khata</span>
+        <div style="width:24px"></div>
+    </div>
+
+    <div id="app">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="app-title serif-bn">গল্পবলিয়ের খেরোর খাতা</h1>
+                <div class="app-subtitle body-en">The Storyteller's Notebook</div>
+                <div class="alpona-divider"></div>
+            </div>
+            
+            <div class="nav-menu">
+                <a class="nav-item active" data-view="dashboard" onclick="navigate('dashboard')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                    <div><span class="nav-label-bn">ড্যাশবোর্ড</span><span class="nav-label-en">Dashboard</span></div>
+                </a>
+                <a class="nav-item" data-view="audiobook" onclick="navigate('audiobook')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                    <div><span class="nav-label-bn">অডিওবুক স্ক্রিপ্ট</span><span class="nav-label-en">Audiobook Scripts</span></div>
+                </a>
+                <a class="nav-item" data-view="novel" onclick="navigate('novel')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    <div><span class="nav-label-bn">উপন্যাস</span><span class="nav-label-en">Novels</span></div>
+                </a>
+                <a class="nav-item" data-view="video" onclick="navigate('video')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
+                    <div><span class="nav-label-bn">ভিডিও স্ক্রিপ্ট</span><span class="nav-label-en">Video Scripts</span></div>
+                </a>
+                <a class="nav-item" data-view="shorts" onclick="navigate('shorts')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="12" y1="2" x2="12" y2="22"></line></svg>
+                    <div><span class="nav-label-bn">শর্টস স্ক্রিপ্ট</span><span class="nav-label-en">Shorts Scripts</span></div>
+                </a>
+                <div style="height: 1px; background: var(--border-dim); margin: 10px 20px;"></div>
+                <a class="nav-item" data-view="tasks" onclick="navigate('tasks')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <div><span class="nav-label-bn">কাজের তালিকা</span><span class="nav-label-en">Master Tasks</span></div>
+                </a>
+                <a class="nav-item" data-view="settings" onclick="navigate('settings')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <div><span class="nav-label-bn">সেটিংস</span><span class="nav-label-en">Settings & Data</span></div>
+                </a>
+            </div>
+            <div class="sidebar-footer" id="daily-quote">"গল্প হলেও সত্যি।"</div>
+        </nav>
+
+        <main id="main-content">
+            
+            <div id="view-dashboard" class="view-container active">
+                <div class="watermark">ক</div>
+                <h2 class="serif-bn text-gold" style="font-size:32px; margin-bottom: 30px;">ড্যাশবোর্ড</h2>
+                
+                <div class="stats-grid">
+                    <div class="card"><div class="type-bar bg-audiobook"></div><div class="stat-value display-en" id="stat-projects">0</div><div class="serif-bn" style="color:var(--text-secondary)">সক্রিয় প্রজেক্ট</div></div>
+                    <div class="card"><div class="type-bar bg-novel"></div><div class="stat-value display-en" id="stat-tasks">0</div><div class="serif-bn" style="color:var(--text-secondary)">আজকের কাজ</div></div>
+                    <div class="card"><div class="type-bar bg-video"></div><div class="stat-value display-en" id="stat-words">0</div><div class="serif-bn" style="color:var(--text-secondary)">আজ লেখা শব্দ</div></div>
+                    <div class="card"><div class="type-bar bg-shorts"></div><div class="stat-value display-en" id="stat-deadline" style="font-size:24px; margin-top:10px;">--</div><div class="serif-bn" style="color:var(--text-secondary)">নিকটতম ডেডলাইন</div></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px;">
+                    <div>
+                        <h3 class="serif-bn text-gold" style="border-bottom: 1px solid var(--border-dim); padding-bottom: 10px; margin-bottom: 20px;">আজকের কাজ (Today's Work)</h3>
+                        <div id="dashboard-tasks-container"></div>
+                    </div>
+                    <div>
+                        <h3 class="serif-bn text-gold" style="border-bottom: 1px solid var(--border-dim); padding-bottom: 10px; margin-bottom: 20px;">সাম্প্রতিক খাতা (Recent Notebooks)</h3>
+                        <div id="dashboard-recent-container" style="display: flex; flex-direction: column; gap: 16px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-category" class="view-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                    <h2 class="serif-bn text-gold" id="category-title" style="font-size:32px;">প্রজেক্ট</h2>
+                    <button class="btn btn-gold" onclick="openModal('modal-project')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> 
+                        নতুন প্রজেক্ট
+                    </button>
+                </div>
+                <div id="category-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;"></div>
+            </div>
+
+            <div id="view-editor" class="view-container" style="padding: 24px; max-width: 1400px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;">
+                    <div>
+                        <button class="btn btn-ghost" onclick="navigate(appData.projects.find(p=>p.id===currentProject.id)?.type || 'dashboard')" style="padding: 4px 10px; font-size: 12px; margin-bottom: 12px;">← ফেরত যান</button>
+                        <h2 id="editor-project-title" class="serif-bn text-gold" style="font-size: 24px; line-height: 1;"></h2>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="serif-bn" style="font-size: 13px; color: var(--smoke); margin-bottom: 4px;" id="save-status">সংরক্ষিত ✓</div>
+                    </div>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="tree-panel">
+                        <div class="project-info-panel">
+                            <div style="display:flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span class="badge badge-progress" id="info-status">In Progress</span>
+                                <span class="serif-bn" style="font-size:12px; color:var(--ash);" id="info-words">০ শব্দ</span>
+                            </div>
+                            <div class="serif-bn deadline-safe" style="font-size: 13px; font-weight:bold;" id="info-deadline">ডেডলাইন: --</div>
+                        </div>
+                        <div class="tree-header">
+                            <span class="serif-bn" style="color:var(--text-primary)">সূচিপত্র</span>
+                            <button class="btn btn-ghost" style="padding: 2px 8px; font-size: 12px;" onclick="addChapter()">+ অধ্যায়</button>
+                        </div>
+                        <div id="editor-tree" style="flex:1; overflow-y: auto; padding: 10px 0;"></div>
+                    </div>
+
+                    <div class="editor-panel">
+                        <div class="editor-toolbar">
+                            <button onclick="formatDoc('bold')" title="Bold"><b>B</b></button>
+                            <button onclick="formatDoc('italic')" title="Italic"><i>I</i></button>
+                            <button onclick="formatDoc('underline')" title="Underline"><u>U</u></button>
+                            <div class="toolbar-divider"></div>
+                            
+                            <button onclick="formatDoc('formatBlock', 'H2')" class="serif-bn">H1</button>
+                            <button onclick="formatDoc('formatBlock', 'H3')" class="serif-bn">H2</button>
+                            <button onclick="formatDoc('formatBlock', 'P')" class="serif-bn">P</button>
+                            <div class="toolbar-divider"></div>
+                            
+                            <button onclick="formatDoc('justifyLeft')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="15" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+                            <button onclick="formatDoc('justifyCenter')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="6" y1="12" x2="18" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+                            <div class="toolbar-divider"></div>
+                            
+                            <button onclick="insertCustomBlock('dialogue')" style="color: var(--gold)">💬 সংলাপ</button>
+                            <button onclick="insertCustomBlock('direction')" style="color: var(--ash)">🎬 ডিরেকশন</button>
+                            <button onclick="insertCustomBlock('note')" style="color: var(--audio-amber-bright)">📌 নোট</button>
+                            <button onclick="insertCustomBlock('sound')" style="color: var(--video-teal-bright)">🎵 সাউন্ড</button>
+                            <div class="toolbar-divider"></div>
+
+                            <button id="lang-toggle-btn" onclick="toggleEditorLanguage()" style="font-weight:bold; color:var(--text-primary)">বাং</button>
+                            
+                            <span style="flex:1"></span>
+                            
+                            <button onclick="exportCurrentProject()" title="Export Project" style="color:var(--text-secondary)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> এক্সপোর্ট
+                            </button>
+                        </div>
+                        
+                        <div class="editor-content-wrapper">
+                            <div id="rich-editor" class="editor-content lang-bn" contenteditable="true" spellcheck="false" data-placeholder="এখানে তোমার গল্প শুরু হোক..."></div>
+                            
+                            <div class="editor-tasks">
+                                <h4 class="serif-bn text-gold" style="margin-bottom: 12px; font-size: 16px;">এই প্রজেক্টের কাজ</h4>
+                                <div style="display:flex; gap:10px; margin-bottom: 16px;">
+                                    <input type="text" id="new-task-input" placeholder="নতুন কাজ যোগ করুন..." style="margin-bottom:0; padding:8px 12px;">
+                                    <button class="btn btn-gold" onclick="addProjectTask()">যোগ করুন</button>
+                                </div>
+                                <div id="project-task-list" style="display:flex; flex-direction:column; gap:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-tasks" class="view-container">
+                <h2 class="serif-bn text-gold" style="font-size:32px; margin-bottom: 30px;">মাস্টার কাজের তালিকা</h2>
+                <div class="task-filter-bar">
+                    <select id="task-filter-status" style="margin-bottom:0; width:auto;"><option value="all">সব কাজ</option><option value="pending">বাকি আছে</option><option value="done">সম্পন্ন</option></select>
+                    <select id="task-filter-priority" style="margin-bottom:0; width:auto;"><option value="all">সব অগ্রাধিকার</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+                </div>
+                <div class="card">
+                    <div id="master-task-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+            </div>
+
+            <div id="view-settings" class="view-container">
+                <h2 class="serif-bn text-gold" style="font-size:32px; margin-bottom: 30px;">সেটিংস ও ডেটা</h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;">
+                    <div class="card">
+                        <h3 class="serif-bn text-gold" style="margin-bottom: 20px; border-bottom: 1px solid var(--border-dim); padding-bottom:10px;">AI সহকারী (Anthropic)</h3>
+                        <label>API Key (আপনার ব্রাউজারে সুরক্ষিত থাকবে):</label>
+                        <input type="password" id="setting-apikey" placeholder="sk-ant-...">
+                        
+                        <label>AI লেখার ধরন:</label>
+                        <select id="setting-aistyle">
+                            <option value="storyteller">Storyteller (Literary, Poetic, Detailed)</option>
+                            <option value="concise">Concise (Direct, Script-focused)</option>
+                        </select>
+                        <button class="btn btn-gold" onclick="saveSettings()">সেটিংস সেভ করুন</button>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="serif-bn text-gold" style="margin-bottom: 20px; border-bottom: 1px solid var(--border-dim); padding-bottom:10px;">ডেটা ব্যাকআপ</h3>
+                        <p class="serif-bn" style="color:var(--ash); font-size:14px; margin-bottom: 16px;">আপনার সমস্ত লেখা লোকাল স্টোরেজে থাকে। নিরাপদ থাকার জন্য মাঝে মাঝে ব্যাকআপ ডাউনলোড করে রাখুন।</p>
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <button class="btn btn-gold" onclick="exportDataJSON()">ডাউনলোড ব্যাকআপ (JSON)</button>
+                            <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()">রিস্টোর (Import)</button>
+                            <input type="file" id="import-file" style="display:none" accept=".json" onchange="importDataJSON(event)">
+                        </div>
+                        <div class="alpona-divider" style="margin: 24px 0;"></div>
+                        <button class="btn btn-danger" onclick="openModal('modal-clear-data')">সমস্ত ডেটা মুছে ফেলুন</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <button id="ai-trigger" onclick="toggleAI()">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </button>
+
+        <div id="ai-drawer">
+            <div class="ai-header">
+                <div>
+                    <h3 class="serif-bn text-gold" style="font-size:20px;">গল্পের সহায়ক</h3>
+                    <div class="context-selector">
+                        <span class="serif-bn" style="font-size:12px; color:var(--ash)">প্রেক্ষাপট:</span>
+                        <select id="ai-context-select" style="margin:0; padding: 4px 8px; font-size:12px; width:auto; background:var(--ink); border-color:var(--border-dim);">
+                            <option value="scene">বর্তমান দৃশ্য</option>
+                            <option value="chapter">পুরো অধ্যায়</option>
+                            <option value="project">প্রজেক্ট সারসংক্ষেপ</option>
+                            <option value="none">প্রসঙ্গ ছাড়া</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-ghost" style="border:none; padding:8px;" onclick="toggleAI()">✕</button>
+            </div>
+            
+            <div class="ai-body" id="ai-chat-history">
+                <div class="ai-msg msg-ai serif-bn">নমস্কার! আমি আপনার গল্পের সহায়ক। আজ কালির আঁচড়ে কী রূপকথার জন্ম নেবে?</div>
+            </div>
+
+            <div class="ai-footer">
+                <div class="ai-prompts-grid">
+                    <button class="prompt-pill" onclick="sendPrompt('লেখাটি যেখান থেকে থেমেছে, সেখান থেকে চালিয়ে যাও।')">✍️ লেখা চালিয়ে যাও</button>
+                    <button class="prompt-pill" onclick="sendPrompt('এই গল্পের পরের অংশের জন্য ৩টি প্লট আইডিয়া দাও।')">💡 প্লট আইডিয়া</button>
+                    <button class="prompt-pill" onclick="sendPrompt('চরিত্রগুলোর মধ্যে একটি সুন্দর সংলাপ তৈরি করো।')">🎭 সংলাপ লেখো</button>
+                    <button class="prompt-pill" onclick="sendPrompt('এই অংশটিকে অডিওবুক স্ক্রিপ্টে (সাউন্ড কিউ সহ) সাজাও।')">🎙️ অডিওবুক রূপান্তর</button>
+                    <button class="prompt-pill" onclick="sendPrompt('Translate the selected text/scene to elegant English.')">🌐 Translate to EN</button>
+                    <button class="prompt-pill" onclick="sendPrompt('দৃশ্যটির একটি বায়বীয় বা ভৌতিক বর্ণনা তৈরি করো।')">🌙 মেজাজ তৈরি করো</button>
+                </div>
+                <div class="ai-input-area">
+                    <textarea id="ai-input" class="ai-textarea" placeholder="সহায়ককে নির্দেশ দিন..."></textarea>
+                    <button class="btn btn-gold" style="padding: 0 20px; height: 80px;" onclick="handleAISubmit()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-project">
+        <div class="modal">
+            <h3 class="serif-bn text-gold" style="font-size: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--border-dim); padding-bottom: 10px;" id="modal-project-title">নতুন প্রজেক্ট</h3>
+            
+            <div class="form-grid">
+                <div class="full-width">
+                    <label>প্রজেক্টের নাম (Bengali)</label>
+                    <input type="text" id="proj-title-bn" placeholder="যেমন: বাংলার ভূত - পর্ব ১">
+                </div>
+                <div class="full-width">
+                    <label class="body-en">Project Name (English)</label>
+                    <input type="text" id="proj-title-en" class="body-en" placeholder="e.g. Banglar Bhoot - Ep 1">
+                </div>
+                <div class="full-width">
+                    <label>সারসংক্ষেপ (Description)</label>
+                    <textarea id="proj-desc" rows="3" placeholder="গল্পের মূল ভাবনা..."></textarea>
+                </div>
+                
+                <div>
+                    <label>ধরন (Type)</label>
+                    <select id="proj-type">
+                        <option value="audiobook">অডিওবুক (Audiobook)</option>
+                        <option value="novel">উপন্যাস (Novel)</option>
+                        <option value="video">ভিডিও (Video Script)</option>
+                        <option value="shorts">শর্টস (Shorts)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>স্ট্যাটাস (Status)</label>
+                    <select id="proj-status">
+                        <option value="draft">খসড়া (Draft)</option>
+                        <option value="inprogress">চলছে (In Progress)</option>
+                        <option value="review">রিভিউ (Review)</option>
+                        <option value="complete">সম্পন্ন (Complete)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>ডেডলাইন (Deadline)</label>
+                    <input type="date" id="proj-deadline">
+                </div>
+                <div>
+                    <label>প্রকাশের তারিখ (Publish Date)</label>
+                    <input type="date" id="proj-upload">
+                </div>
+                <div class="full-width">
+                    <label>ভাষা (Language)</label>
+                    <select id="proj-lang">
+                        <option value="bn">বাংলা (Bengali)</option>
+                        <option value="en">English</option>
+                        <option value="both">উভয় (Both)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content: flex-end; gap: 12px; margin-top: 30px; border-top: 1px solid var(--border-dim); padding-top: 20px;">
+                <button class="btn btn-ghost" onclick="closeModals()">বাতিল</button>
+                <button class="btn btn-gold" onclick="saveProjectForm()">সংরক্ষণ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-delete">
+        <div class="modal" style="text-align: center; max-width: 400px;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--crimson)" stroke-width="1.5" style="margin-bottom: 20px;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>
+            <h3 class="serif-bn text-gold" style="font-size: 22px; margin-bottom: 12px;">নিশ্চিত করুন</h3>
+            <p class="serif-bn" style="color:var(--ash); margin-bottom: 24px; font-style: italic;">"একবার মুছে গেলে আর ফিরবে না..."</p>
+            <div style="display:flex; justify-content: center; gap: 12px;">
+                <button class="btn btn-ghost" onclick="closeModals()">থাক</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">মুছে ফেলুন</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-clear-data">
+        <div class="modal" style="text-align: center; max-width: 450px;">
+            <h3 class="serif-bn text-crimson" style="font-size: 24px; margin-bottom: 16px;">সতর্কতা!</h3>
+            <p class="serif-bn" style="color:var(--ash); margin-bottom: 24px;">আপনি কি নিশ্চিত যে আপনার সমস্ত খাতা, সেটিংস এবং ডেটা মুছে ফেলতে চান? এই সিদ্ধান্তটি অপরিবর্তনীয়।</p>
+            <div style="display:flex; justify-content: center; gap: 12px;">
+                <button class="btn btn-ghost" onclick="closeModals()">বাতিল</button>
+                <button class="btn btn-danger" onclick="executeDataWipe()">হ্যাঁ, সব মুছুন</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CHUNK 1 STUBS (To prevent UI errors before Chunk 2 is pasted) ---
+        let appData = { projects: [] };
+        let currentProject = null;
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active')); }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function toggleAI() { document.getElementById('ai-drawer').classList.toggle('open'); }
+        function navigate(view) {
+            document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            let v = document.getElementById('view-' + view);
+            if(!v && ['audiobook','novel','video','shorts'].includes(view)) v = document.getElementById('view-category');
+            if(v) v.classList.add('active');
+            let n = document.querySelector(`.nav-item[data-view="${view}"]`);
+            if(n) n.classList.add('active');
+            if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+        }
+        // Open the dashboard visually on load
+        navigate('dashboard');
+        
+        /* ========================================================================
+        STOP HERE FOR CHUNK 1
+        DO NOT CLOSE THE <script> OR <body> TAGS YET.
+        ========================================================================
+        */
+
+              /* ========================================================================
+           CHUNK 2: CORE APPLICATION LOGIC
+        ======================================================================== */
+
+        const STORAGE_KEY = 'gkk_data_v1';
+        let currentScene = null;
+        let activeCategory = 'dashboard';
+        let itemToDelete = null; // {type: 'project'|'chapter'|'scene'|'task', id: ...}
+        
+        // Custom Context Menu State
+        let contextTarget = null;
+
+        /* --- INITIALIZATION & DATA MANAGEMENT --- */
+        function initApp() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    appData = JSON.parse(saved);
+                    // Handle migrations if needed
+                    if(!appData.settings) appData.settings = { apiKey: "", defaultLanguage: "bn", aiStyle: "storyteller" };
+                    if(!appData.projects) appData.projects = [];
+                    if(!appData.dailyWordCount) appData.dailyWordCount = {};
+                } catch(e) { console.error("Data parse error"); }
+            } else {
+                appData = {
+                    version: "1.0",
+                    settings: { apiKey: "", defaultLanguage: "bn", aiStyle: "storyteller" },
+                    projects: [],
+                    dailyWordCount: {}
+                };
+            }
+            
+            // Set daily quote based on day of year
+            const quotes = [
+                "যেতে নাহি দিব হায়, তবু যেতে দিতে হয়... — রবীন্দ্রনাথ ঠাকুর",
+                "বহুদিন ধরে বহু ক্রোশ দূরে... — রবীন্দ্রনাথ ঠাকুর",
+                "হাজার বছর ধরে আমি পথ হাঁটিতেছি পৃথিবীর পথে... — জীবনানন্দ দাশ",
+                "আমার পথ চলাতেই আনন্দ... — রবীন্দ্রনাথ ঠাকুর",
+                "অন্ধকার ঘরে শুধু কলমের শব্দ... এটাই তো জীবন।",
+                "ভূত বলে কিছু নেই, আছে শুধু মনের ভয়... — শরদিন্দু বন্দ্যোপাধ্যায়",
+                "গল্প হলেও সত্যি।"
+            ];
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            document.getElementById('daily-quote').innerText = quotes[dayOfYear % quotes.length];
+
+            setupEditorAutoSave();
+            registerPWA();
+            navigate('dashboard');
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        }
+
+        /* --- NAVIGATION & CORE RENDERERS --- */
+        // Note: navigate() is partially defined in Chunk 1, we overwrite it here for full functionality
+        function navigate(view) {
+            document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            activeCategory = view;
+            let targetView = view;
+            
+            if (['audiobook', 'novel', 'video', 'shorts'].includes(view)) {
+                targetView = 'category';
+                renderCategory(view);
+            } else if (view === 'dashboard') {
+                renderDashboard();
+            } else if (view === 'tasks') {
+                renderMasterTasks();
+            } else if (view === 'settings') {
+                document.getElementById('setting-apikey').value = appData.settings.apiKey || '';
+                document.getElementById('setting-aistyle').value = appData.settings.aiStyle || 'storyteller';
+            } else if (view === 'editor') {
+                renderEditor();
+            }
+
+            const viewEl = document.getElementById('view-' + targetView);
+            if(viewEl) viewEl.classList.add('active');
+            
+            const navItem = document.querySelector(`.nav-item[data-view="${view}"]`);
+            if(navItem) navItem.classList.add('active');
+            
+            if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+        }
+
+        /* --- DASHBOARD LOGIC --- */
+        function renderDashboard() {
+            document.getElementById('stat-projects').innerText = appData.projects.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('stat-words').innerText = appData.dailyWordCount[today] || 0;
+
+            // Calculate Tasks
+            let todayTasks = 0;
+            let nearestDeadline = null;
+            let nearestDate = Infinity;
+            const taskContainer = document.getElementById('dashboard-tasks-container');
+            const recentContainer = document.getElementById('dashboard-recent-container');
+            taskContainer.innerHTML = ''; recentContainer.innerHTML = '';
+
+            appData.projects.forEach(p => {
+                // Check Deadlines
+                if(p.deadline) {
+                    const dDate = new Date(p.deadline).getTime();
+                    if(dDate > Date.now() && dDate < nearestDate) {
+                        nearestDate = dDate; nearestDeadline = p.deadline;
+                    }
+                }
+                // Check Tasks
+                if(p.tasks) {
+                    p.tasks.forEach(t => {
+                        if(!t.done) {
+                            todayTasks++;
+                            if(todayTasks <= 5) {
+                                taskContainer.innerHTML += `
+                                    <div class="card" style="padding: 12px 16px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center;">
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <div class="status-dot half" style="background: var(--${getProjectColor(p.type)})"></div>
+                                            <span class="serif-bn" style="font-size:14px;">${t.text}</span>
+                                        </div>
+                                        <span class="badge" style="font-size:10px;">${p.title_bn}</span>
+                                    </div>`;
+                            }
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('stat-tasks').innerText = todayTasks;
+            if(nearestDeadline) {
+                const diffDays = Math.ceil((new Date(nearestDeadline) - new Date()) / (1000 * 60 * 60 * 24));
+                document.getElementById('stat-deadline').innerText = `${diffDays} দিন`;
+                document.getElementById('stat-deadline').className = `stat-value display-en ${diffDays < 3 ? 'deadline-danger' : (diffDays <= 7 ? 'deadline-warn' : 'deadline-safe')}`;
+            } else {
+                document.getElementById('stat-deadline').innerText = '--';
+                document.getElementById('stat-deadline').className = 'stat-value display-en';
+            }
+
+            if(todayTasks === 0) taskContainer.innerHTML = '<div class="empty-state" style="padding:20px;"><div class="empty-text">আজকের জন্য কোনো কাজ বাকি নেই।</div></div>';
+
+            // Recent Projects
+            const recent = [...appData.projects].sort((a,b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)).slice(0, 4);
+            if(recent.length === 0) recentContainer.innerHTML = '<div class="empty-state" style="padding:20px;"><div class="empty-text">এখনো কোনো খাতা তৈরি হয়নি।</div></div>';
+            recent.forEach(p => {
+                recentContainer.innerHTML += `
+                    <div class="card" style="cursor:pointer" onclick="openProject('${p.id}')">
+                        <div class="type-bar bg-${p.type}"></div>
+                        <h4 class="serif-bn text-gold" style="font-size:18px;">${p.title_bn}</h4>
+                        <div class="body-en" style="font-size:12px; color:var(--ash); margin-bottom: 8px;">${p.title_en}</div>
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--smoke);">
+                            <span>স্ট্যাটাস: ${p.status === 'complete' ? 'সম্পন্ন' : 'চলছে'}</span>
+                            <span>অধ্যায়: ${p.chapters ? p.chapters.length : 0}</span>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        /* --- CATEGORY LOGIC --- */
+        function getProjectColor(type) {
+            const colors = { audiobook: 'audio-amber', novel: 'novel-indigo', video: 'video-teal', shorts: 'shorts-rose' };
+            return colors[type] || 'gold';
+        }
+
+        function renderCategory(type) {
+            const titles = { audiobook: "অডিওবুক স্ক্রিপ্ট", novel: "উপন্যাস", video: "ভিডিও স্ক্রিপ্ট", shorts: "শর্টস স্ক্রিপ্ট" };
+            document.getElementById('category-title').innerText = titles[type];
+            
+            const grid = document.getElementById('category-grid');
+            grid.innerHTML = '';
+
+            const projs = appData.projects.filter(p => p.type === type);
+            if (projs.length === 0) {
+                grid.innerHTML = `<div class="empty-state full-width"><div class="empty-text">এই বিভাগে কোনো খাতা নেই। নতুন প্রজেক্ট তৈরি করুন।</div></div>`;
+                return;
+            }
+
+            projs.forEach(p => {
+                const updated = new Date(p.updatedAt || Date.now()).toLocaleDateString('bn-BD');
+                grid.innerHTML += `
+                    <div class="card" style="cursor:pointer" onclick="openProject('${p.id}')">
+                        <div class="type-bar bg-${p.type}"></div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <h3 class="serif-bn text-gold" style="font-size: 22px; line-height:1.2; margin-bottom:4px;">${p.title_bn}</h3>
+                                <div class="body-en" style="color:var(--ash); margin-bottom: 16px; font-size:13px;">${p.title_en}</div>
+                            </div>
+                            <span class="badge badge-${p.status === 'draft' ? 'draft' : (p.status === 'complete' ? 'complete' : 'progress')}">${p.status}</span>
+                        </div>
+                        <div class="serif-bn" style="font-size:12px; color:var(--smoke); display:flex; justify-content:space-between;">
+                            <span>শেষ আপডেট: ${updated}</span>
+                            <span>ডেডলাইন: ${p.deadline ? new Date(p.deadline).toLocaleDateString('bn-BD') : '--'}</span>
+                        </div>
+                        <button class="btn btn-ghost" style="position:absolute; bottom:16px; right:16px; padding:4px 8px; font-size:10px; border:none;" onclick="event.stopPropagation(); promptDelete('project', '${p.id}')">মুছুন</button>
+                    </div>`;
+            });
+        }
+
+        /* --- PROJECT CRUD --- */
+        function generateId() { return Math.random().toString(36).substr(2, 9); }
+
+        function openProjectModal(editId = null) {
+            // Edit functionality can be added later, currently builds new
+            document.getElementById('proj-title-bn').value = '';
+            document.getElementById('proj-title-en').value = '';
+            document.getElementById('proj-desc').value = '';
+            document.getElementById('proj-deadline').value = '';
+            document.getElementById('proj-upload').value = '';
+            
+            if (['audiobook', 'novel', 'video', 'shorts'].includes(activeCategory)) {
+                document.getElementById('proj-type').value = activeCategory;
+            }
+            openModal('modal-project');
+        }
+
+        function saveProjectForm() {
+            const newProj = {
+                id: generateId(),
+                title_bn: document.getElementById('proj-title-bn').value || 'শিরোনামহীন',
+                title_en: document.getElementById('proj-title-en').value || 'Untitled',
+                description: document.getElementById('proj-desc').value,
+                type: document.getElementById('proj-type').value,
+                status: document.getElementById('proj-status').value,
+                deadline: document.getElementById('proj-deadline').value,
+                uploadDate: document.getElementById('proj-upload').value,
+                language: document.getElementById('proj-lang').value,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                chapters: [{
+                    id: generateId(), title: 'অধ্যায় ১', order: 0,
+                    scenes: [{ id: generateId(), title: 'দৃশ্য ১', content: '', wordCount: 0 }]
+                }],
+                tasks: []
+            };
+
+            appData.projects.push(newProj);
+            saveData();
+            closeModals();
+            navigate(newProj.type);
+        }
+
+        /* --- EDITOR LOGIC --- */
+        function openProject(id) {
+            currentProject = appData.projects.find(p => p.id === id);
+            if(currentProject && currentProject.chapters.length > 0 && currentProject.chapters[0].scenes.length > 0) {
+                currentScene = currentProject.chapters[0].scenes[0];
+            } else {
+                currentScene = null;
+            }
+            navigate('editor');
+        }
+
+        function renderEditor() {
+            if(!currentProject) return;
+            document.getElementById('editor-project-title').innerText = currentProject.title_bn;
+            
+            // Info Panel
+            let totalWords = 0;
+            currentProject.chapters.forEach(ch => ch.scenes.forEach(sc => totalWords += (sc.wordCount || 0)));
+            document.getElementById('info-words').innerText = `${totalWords} শব্দ`;
+            document.getElementById('info-status').innerText = currentProject.status.toUpperCase();
+            
+            const dlEl = document.getElementById('info-deadline');
+            if(currentProject.deadline) {
+                const diffDays = Math.ceil((new Date(currentProject.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+                dlEl.innerText = diffDays < 0 ? 'ডেডলাইন পার হয়েছে!' : `${diffDays} দিন বাকি`;
+                dlEl.className = `serif-bn ${diffDays < 3 ? 'deadline-danger' : (diffDays <= 7 ? 'deadline-warn' : 'deadline-safe')}`;
+            } else {
+                dlEl.innerText = 'কোনো ডেডলাইন নেই';
+                dlEl.className = 'serif-bn';
+            }
+
+            // Tree Panel
+            const tree = document.getElementById('editor-tree');
+            tree.innerHTML = '';
+            currentProject.chapters.forEach((ch, chIndex) => {
+                const chDiv = document.createElement('div');
+                chDiv.innerHTML = `
+                    <div class="tree-item" style="color:var(--text-primary); font-family:var(--font-bn-serif); padding-top:16px; font-weight:bold;">
+                        <span ondblclick="renameItem('chapter', '${ch.id}')">${ch.title}</span>
+                        <button class="btn btn-ghost" style="padding:0 4px; border:none; font-size:16px;" onclick="addScene('${ch.id}')">+</button>
+                    </div>`;
+                tree.appendChild(chDiv);
+                
+                ch.scenes.forEach((sc, scIndex) => {
+                    const isActive = currentScene && currentScene.id === sc.id ? 'active' : '';
+                    const scDiv = document.createElement('div');
+                    scDiv.className = `tree-item ${isActive}`;
+                    scDiv.style.paddingLeft = '30px';
+                    scDiv.draggable = true;
+                    // Drag events
+                    scDiv.ondragstart = (e) => { e.dataTransfer.setData('text/plain', JSON.stringify({chId: ch.id, scId: sc.id})); };
+                    scDiv.ondragover = (e) => { e.preventDefault(); scDiv.style.borderTop = "2px solid var(--gold)"; };
+                    scDiv.ondragleave = (e) => { scDiv.style.borderTop = "none"; };
+                    scDiv.ondrop = (e) => {
+                        e.preventDefault(); scDiv.style.borderTop = "none";
+                        handleDrop(e, ch.id, scIndex);
+                    };
+
+                    scDiv.innerHTML = `
+                        <span style="flex:1;" onclick="loadScene('${ch.id}', '${sc.id}')" ondblclick="renameItem('scene', '${ch.id}', '${sc.id}')">${sc.title}</span>
+                        <div class="status-dot ${sc.content && sc.content.length > 50 ? 'full' : 'half'}"></div>
+                    `;
+                    tree.appendChild(scDiv);
+                });
+            });
+
+            // Content & Language
+            const editor = document.getElementById('rich-editor');
+            if(currentScene) {
+                editor.innerHTML = currentScene.content || '';
+                updateWordCount();
+                
+                // Set Language Font based on project or toggle
+                const langBtn = document.getElementById('lang-toggle-btn');
+                if(currentProject.language === 'en') {
+                    editor.className = 'editor-content lang-en'; langBtn.innerText = 'EN';
+                } else {
+                    editor.className = 'editor-content lang-bn'; langBtn.innerText = 'বাং';
+                }
+            } else {
+                editor.innerHTML = '';
+            }
+
+            renderProjectTasks();
+        }
+
+        // --- Drag and Drop Logic ---
+        function handleDrop(e, targetChId, targetScIndex) {
+            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+            saveCurrentSceneContent(); // Save before moving
+
+            // Find source
+            const sourceCh = currentProject.chapters.find(c => c.id === data.chId);
+            const sourceScIndex = sourceCh.scenes.findIndex(s => s.id === data.scId);
+            const [movedScene] = sourceCh.scenes.splice(sourceScIndex, 1);
+
+            // Find target
+            const targetCh = currentProject.chapters.find(c => c.id === targetChId);
+            targetCh.scenes.splice(targetScIndex, 0, movedScene);
+
+            currentProject.updatedAt = new Date().toISOString();
+            saveData();
+            renderEditor();
+        }
+
+        // --- Editor Core Functions ---
+        function loadScene(chId, scId) {
+            saveCurrentSceneContent();
+            const ch = currentProject.chapters.find(c => c.id === chId);
+            currentScene = ch.scenes.find(s => s.id === scId);
+            renderEditor();
+        }
+
+        function saveCurrentSceneContent() {
+            if(currentScene && document.getElementById('view-editor').classList.contains('active')) {
+                const editor = document.getElementById('rich-editor');
+                currentScene.content = editor.innerHTML;
+                
+                // Word Count Calc
+                const text = editor.innerText.trim();
+                currentScene.wordCount = text ? text.split(/\s+/).length : 0;
+                
+                currentProject.updatedAt = new Date().toISOString();
+                saveData();
+                showSaveStatus();
+            }
+        }
+
+        function setupEditorAutoSave() {
+            const editor = document.getElementById('rich-editor');
+            editor.addEventListener('input', () => { updateWordCount(); });
+            setInterval(() => { saveCurrentSceneContent(); }, 15000);
+        }
+
+        function updateWordCount() {
+            const text = document.getElementById('rich-editor').innerText.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            // Update daily count roughly
+            const today = new Date().toISOString().split('T')[0];
+            appData.dailyWordCount[today] = (appData.dailyWordCount[today] || 0) + 1;
+        }
+
+        function showSaveStatus() {
+            const st = document.getElementById('save-status');
+            st.style.opacity = '1';
+            setTimeout(() => { st.style.opacity = '0.3'; }, 2000);
+        }
+
+        function formatDoc(cmd, value = null) {
+            document.execCommand(cmd, false, value);
+            document.getElementById('rich-editor').focus();
+        }
+
+        function toggleEditorLanguage() {
+            const editor = document.getElementById('rich-editor');
+            const btn = document.getElementById('lang-toggle-btn');
+            if(editor.classList.contains('lang-bn')) {
+                editor.className = 'editor-content lang-en';
+                btn.innerText = 'EN';
+            } else {
+                editor.className = 'editor-content lang-bn';
+                btn.innerText = 'বাং';
+            }
+        }
+
+        function insertCustomBlock(type) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const range = selection.getRangeAt(0);
+            const content = range.extractContents();
+            
+            let wrapper = document.createElement('div');
+            
+            if(type === 'dialogue') {
+                wrapper = document.createElement('blockquote');
+                wrapper.className = 'dialogue';
+                const name = prompt("চরিত্রের নাম (Character Name):", "চরিত্র");
+                if(name) { wrapper.innerHTML = `<strong class="text-gold" style="font-size:13px; text-transform:uppercase; letter-spacing:1px;">${name}</strong><br>`; }
+            } else if (type === 'direction') {
+                wrapper.className = 'direction';
+                wrapper.innerHTML = `[ `;
+            } else if (type === 'note') {
+                wrapper.className = 'note';
+                wrapper.innerHTML = `📌 <b>নোট:</b> `;
+            } else if (type === 'sound') {
+                wrapper = document.createElement('span');
+                wrapper.className = 'sound-cue';
+                wrapper.innerHTML = `🎵 SFX: `;
+            }
+
+            if(content.textContent.trim() === '') {
+                wrapper.innerHTML += (type==='sound' ? 'শব্দ...' : 'লেখা...');
+            } else {
+                wrapper.appendChild(content);
+            }
+            if(type==='direction') wrapper.innerHTML += ` ]`;
+
+            range.insertNode(wrapper);
+            
+            // Move cursor
+            const newRange = document.createRange();
+            newRange.setStartAfter(wrapper);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+        }
+
+        // --- Structure Management ---
+        function addChapter() {
+            if(!currentProject) return;
+            saveCurrentSceneContent();
+            const newCh = {
+                id: generateId(),
+                title: `অধ্যায় ${currentProject.chapters.length + 1}`,
+                scenes: [{ id: generateId(), title: 'দৃশ্য ১', content: '', wordCount: 0 }]
+            };
+            currentProject.chapters.push(newCh);
+            currentScene = newCh.scenes[0];
+            saveData(); renderEditor();
+        }
+
+        function addScene(chId) {
+            saveCurrentSceneContent();
+            const ch = currentProject.chapters.find(c => c.id === chId);
+            const newSc = { id: generateId(), title: `দৃশ্য ${ch.scenes.length + 1}`, content: '', wordCount: 0 };
+            ch.scenes.push(newSc);
+            currentScene = newSc;
+            saveData(); renderEditor();
+        }
+
+        function renameItem(type, chId, scId = null) {
+            const newName = prompt("নতুন নাম দিন:", "");
+            if(!newName) return;
+            const ch = currentProject.chapters.find(c => c.id === chId);
+            if(type === 'chapter') ch.title = newName;
+            if(type === 'scene') ch.scenes.find(s => s.id === scId).title = newName;
+            saveData(); renderEditor();
+        }
+
+        // --- Export ---
+        function exportCurrentProject() {
+            if(!currentProject) return;
+            saveCurrentSceneContent();
+            
+            let exportHtml = `<html><head><meta charset="utf-8"><title>${currentProject.title_bn}</title></head><body style="font-family: serif; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 40px; color: #111; background: #fdfbf7;">`;
+            exportHtml += `<h1 style="text-align:center; font-size: 32px;">${currentProject.title_bn}</h1>`;
+            exportHtml += `<h3 style="text-align:center; color: #555; margin-bottom: 40px;">${currentProject.title_en}</h3>`;
+            
+            currentProject.chapters.forEach(ch => {
+                exportHtml += `<h2 style="margin-top: 50px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">${ch.title}</h2>`;
+                ch.scenes.forEach(sc => {
+                    exportHtml += `<h4 style="margin-top: 30px; color: #666;">${sc.title}</h4>`;
+                    exportHtml += `<div>${sc.content}</div>`;
+                });
+            });
+            exportHtml += `</body></html>`;
+
+            const blob = new Blob([exportHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentProject.title_en.replace(/\s+/g, '_')}_Export.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        /* --- TASKS LOGIC --- */
+        function addProjectTask() {
+            const input = document.getElementById('new-task-input');
+            const text = input.value.trim();
+            if(!text) return;
+            if(!currentProject.tasks) currentProject.tasks = [];
+            
+            currentProject.tasks.push({
+                id: generateId(),
+                text: text,
+                done: false,
+                priority: 'medium',
+                createdAt: new Date().toISOString()
+            });
+            input.value = '';
+            saveData(); renderProjectTasks();
+        }
+
+        function renderProjectTasks() {
+            const list = document.getElementById('project-task-list');
+            list.innerHTML = '';
+            if(!currentProject.tasks) return;
+
+            currentProject.tasks.forEach(t => {
+                list.innerHTML += `
+                    <div class="task-item ${t.done ? 'done' : ''}">
+                        <input type="checkbox" class="task-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask('${currentProject.id}', '${t.id}')">
+                        <span class="serif-bn" style="flex:1;">${t.text}</span>
+                        <button class="btn btn-ghost" style="padding: 2px 6px; border:none; color:var(--crimson);" onclick="promptDelete('task', '${currentProject.id}', '${t.id}')">✕</button>
+                    </div>`;
+            });
+        }
+
+        function toggleTask(projId, taskId) {
+            const p = appData.projects.find(p => p.id === projId);
+            const t = p.tasks.find(t => t.id === taskId);
+            t.done = !t.done;
+            saveData();
+            if(document.getElementById('view-editor').classList.contains('active')) renderProjectTasks();
+            if(document.getElementById('view-tasks').classList.contains('active')) renderMasterTasks();
+        }
+
+        function renderMasterTasks() {
+            const list = document.getElementById('master-task-list');
+            list.innerHTML = '';
+            const filterStatus = document.getElementById('task-filter-status').value;
+            
+            let allTasks = [];
+            appData.projects.forEach(p => {
+                if(p.tasks) {
+                    p.tasks.forEach(t => {
+                        allTasks.push({ ...t, projId: p.id, projName: p.title_bn, projType: p.type });
+                    });
+                }
+            });
+
+            if(filterStatus === 'pending') allTasks = allTasks.filter(t => !t.done);
+            if(filterStatus === 'done') allTasks = allTasks.filter(t => t.done);
+
+            if(allTasks.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-text">কোনো কাজ তালিকাভুক্ত নেই।</div></div>';
+                return;
+            }
+
+            allTasks.forEach(t => {
+                list.innerHTML += `
+                    <div class="task-item ${t.done ? 'done' : ''}" style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 2px;">
+                        <input type="checkbox" class="task-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask('${t.projId}', '${t.id}')">
+                        <div style="flex:1;">
+                            <div class="serif-bn" style="font-size:16px;">${t.text}</div>
+                            <div class="badge" style="font-size:10px; margin-top:4px; color:var(--${getProjectColor(t.projType)}); border-color:var(--${getProjectColor(t.projType)});">${t.projName}</div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        document.getElementById('task-filter-status').addEventListener('change', renderMasterTasks);
+
+        /* --- DELETION LOGIC --- */
+        function promptDelete(type, id1, id2 = null) {
+            itemToDelete = { type, id1, id2 };
+            openModal('modal-delete');
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+            if(!itemToDelete) return;
+            const { type, id1, id2 } = itemToDelete;
+            
+            if(type === 'project') {
+                appData.projects = appData.projects.filter(p => p.id !== id1);
+                navigate('dashboard');
+            } else if (type === 'task') {
+                const p = appData.projects.find(p => p.id === id1);
+                p.tasks = p.tasks.filter(t => t.id !== id2);
+                renderProjectTasks();
+            }
+            // Scene/Chapter delete logic can be expanded here similarly
+
+            saveData(); closeModals(); itemToDelete = null;
+        });
+
+        /* --- SETTINGS & DATA MANAGEMENT --- */
+        function saveSettings() {
+            appData.settings.apiKey = document.getElementById('setting-apikey').value.trim();
+            appData.settings.aiStyle = document.getElementById('setting-aistyle').value;
+            saveData();
+            alert("সেটিংস সংরক্ষিত হয়েছে। (Settings Saved)");
+        }
+
+        function exportDataJSON() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `KherorKhata_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importDataJSON(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if(imported.version && imported.projects) {
+                        appData = imported; saveData();
+                        alert("ডেটা রিস্টোর সফল হয়েছে!");
+                        location.reload();
+                    } else { alert("ভুল ফাইল ফরম্যাট!"); }
+                } catch(err) { alert("ফাইল পড়তে সমস্যা হয়েছে।"); }
+            };
+            reader.readAsText(file);
+        }
+
+        function executeDataWipe() {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+
+        /* --- AI ASSISTANT LOGIC --- */
+        function appendAIMessage(text, isUser) {
+            const chat = document.getElementById('ai-chat-history');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `ai-msg ${isUser ? 'msg-user' : 'msg-ai'} ${/[a-zA-Z]/.test(text) && !/[অ-হ]/.test(text) ? 'body-en' : 'serif-bn'}`;
+            msgDiv.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function sendPrompt(text) {
+            document.getElementById('ai-input').value = text;
+            handleAISubmit();
+        }
+
+        async function handleAISubmit() {
+            const inputEl = document.getElementById('ai-input');
+            const text = inputEl.value.trim();
+            if(!text) return;
+            
+            const apiKey = appData.settings.apiKey;
+            if(!apiKey) {
+                alert("AI ব্যবহার করতে Settings থেকে Anthropic API Key দিন।");
+                toggleAI(); navigate('settings'); return;
+            }
+
+            appendAIMessage(text, true);
+            inputEl.value = '';
+            
+            // Thinking UI
+            const thinkingId = 'think-' + Date.now();
+            const chat = document.getElementById('ai-chat-history');
+            chat.innerHTML += `<div id="${thinkingId}" class="ai-msg msg-ai serif-bn text-gold" style="opacity:0.7">কালির কলম ভাবছে...</div>`;
+            chat.scrollTop = chat.scrollHeight;
+
+            // Build Context
+            let contextText = "";
+            const contextType = document.getElementById('ai-context-select').value;
+            
+            if(currentProject) {
+                if(contextType === 'scene' && currentScene) {
+                    contextText = `Current Scene Context:\n${document.getElementById('rich-editor').innerText.substring(0, 3000)}\n\n`;
+                } else if (contextType === 'chapter' && currentScene) {
+                    // Find parent chapter
+                    const ch = currentProject.chapters.find(c => c.scenes.some(s => s.id === currentScene.id));
+                    let chText = "";
+                    ch.scenes.forEach(s => chText += (s.content.replace(/<[^>]+>/g, '') + "\n"));
+                    contextText = `Current Chapter Context:\n${chText.substring(0, 4000)}\n\n`;
+                } else if (contextType === 'project') {
+                    contextText = `Project Description:\n${currentProject.description}\n\n`;
+                }
+            }
+
+            const stylePref = appData.settings.aiStyle === 'concise' ? "direct and focused on script formatting." : "literary, atmospheric, evoking Bengali gothic and romantic traditions.";
+            const systemPrompt = `You are "গল্পের সহায়ক" (Story Assistant), an expert AI writing companion for a Bengali content creator named Sayan. You excel at horror, mystery, and thriller content (like "Golpoboliye Obhijatrik"). Respond in the language of the user's prompt. Your tone should be ${stylePref}\n\n${contextText}`;
+
+            try {
+                // Using explicit API string from prompt request constraint
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01',
+                        'content-type': 'application/json',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514', // Exact string specified in user prompt
+                        max_tokens: 1024,
+                        system: systemPrompt,
+                        messages: [{ role: 'user', content: text }]
+                    })
+                });
+
+                document.getElementById(thinkingId).remove();
+
+                if(response.ok) {
+                    const data = await response.json();
+                    appendAIMessage(data.content[0].text, false);
+                } else {
+                    const err = await response.json();
+                    
+                    // Fallback block to handle Anthropic's strict model naming if the prompt's name fails
+                    if(err.error && err.error.type === 'not_found_error') {
+                         appendAIMessage(`API Error: The model name "claude-sonnet-4-20250514" was rejected by Anthropic. Update the code to use "claude-3-5-sonnet-20241022".`, false);
+                    } else {
+                        appendAIMessage(`Error: ${err.error?.message || 'Failed to connect.'}`, false);
+                    }
+                }
+            } catch (error) {
+                document.getElementById(thinkingId).remove();
+                appendAIMessage("ইন্টারনেট সংযোগ নেই বা API ত্রুটি ঘটেছে। (Connection Error)", false);
+            }
+        }
+
+        /* --- PWA SETUP --- */
+        function registerPWA() {
+            const manifest = {
+                name: "গল্পবলিয়ের খেরোর খাতা",
+                short_name: "খেরোর খাতা",
+                start_url: ".",
+                display: "standalone",
+                background_color: "#080604",
+                theme_color: "#080604",
+                icons: [{
+                    src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzg5MzJhIiBzdHJva2Utd2lkdGg9IjIiPjxwb2x5Z29uIHBvaW50cz0iMTIgMiAyIDIyIDIyIDIyIDEyIDIiLz48L3N2Zz4=",
+                    sizes: "192x192",
+                    type: "image/svg+xml"
+                }]
+            };
+            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            const link = document.createElement('link');
+            link.rel = 'manifest';
+            link.href = URL.createObjectURL(manifestBlob);
+            document.head.appendChild(link);
+
+            const swCode = `
+                self.addEventListener('install', e => self.skipWaiting());
+                self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+                self.addEventListener('fetch', e => {
+                    // Minimal SW to allow PWA install prompt. Network-only bypasses cache issues.
+                    e.respondWith(fetch(e.request).catch(() => new Response("Offline Mode active.")));
+                });
+            `;
+            const swBlob = new Blob([swCode], {type: 'application/javascript'});
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(console.error);
+            }
+        }
+
+        // Run Init
+        window.onload = initApp;
+
+    </script>
+</body>
+</html>
+
+
+            
 
