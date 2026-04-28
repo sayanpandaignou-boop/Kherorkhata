@@ -173,6 +173,7 @@
         .nav-item[data-view="novel"] { border-left-color: var(--novel-indigo); }
         .nav-item[data-view="video"] { border-left-color: var(--video-teal); }
         .nav-item[data-view="shorts"] { border-left-color: var(--shorts-rose); }
+        .nav-item[data-view="tasks"] { border-left-color: var(--crimson); }
 
         .nav-label-bn { font-family: var(--font-bn-serif); font-size: 15px; display: block; }
         .nav-label-en { font-family: var(--font-en-body); font-size: 11px; color: var(--smoke); display: block; }
@@ -202,7 +203,7 @@
         .view-container {
             display: none;
             padding: 40px;
-            animation: fadeIn Drift 0.4s ease-out forwards;
+            animation: fadeInDrift 0.4s ease-out forwards;
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
@@ -482,9 +483,665 @@
             </div>
             
             <div class="nav-menu">
-                <a class="nav-item 
+                <a class="nav-item active" data-view="dashboard" onclick="navigate('dashboard')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                    <div><span class="nav-label-bn">ড্যাশবোর্ড</span><span class="nav-label-en">Dashboard</span></div>
+                </a>
+                <a class="nav-item" data-view="audiobook" onclick="navigate('audiobook')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                    <div><span class="nav-label-bn">অডিওবুক স্ক্রিপ্ট</span><span class="nav-label-en">Audiobook Scripts</span></div>
+                </a>
+                <a class="nav-item" data-view="novel" onclick="navigate('novel')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    <div><span class="nav-label-bn">উপন্যাস</span><span class="nav-label-en">Novels</span></div>
+                </a>
+                <a class="nav-item" data-view="video" onclick="navigate('video')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
+                    <div><span class="nav-label-bn">ভিডিও স্ক্রিপ্ট</span><span class="nav-label-en">Video Scripts</span></div>
+                </a>
+                <a class="nav-item" data-view="tasks" onclick="navigate('tasks')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <div><span class="nav-label-bn">কাজের তালিকা</span><span class="nav-label-en">Master Tasks</span></div>
+                </a>
+                <a class="nav-item" data-view="settings" onclick="navigate('settings')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <div><span class="nav-label-bn">সেটিংস</span><span class="nav-label-en">Settings</span></div>
+                </a>
+            </div>
 
+            <div class="sidebar-footer" id="daily-quote">
+                "যেতে নাহি দিব হায়, তবু যেতে দিতে হয়..."
+            </div>
+        </nav>
 
+        <main id="main-content">
+            
+            <div id="view-dashboard" class="view-container active">
+                <div class="watermark">গ</div>
+                <h2 class="serif-bn text-gold" style="font-size:28px; margin-bottom: 24px;">ড্যাশবোর্ড</h2>
+                
+                <div class="stats-grid">
+                    <div class="card"><div class="type-bar bg-audio"></div><div class="stat-value" id="stat-projects">0</div><div class="stat-label serif-bn">সক্রিয় প্রজেক্ট</div></div>
+                    <div class="card"><div class="type-bar bg-novel"></div><div class="stat-value" id="stat-words">0</div><div class="stat-label serif-bn">আজকের শব্দসংখ্যা</div></div>
+                    <div class="card"><div class="type-bar bg-video"></div><div class="stat-value" id="stat-tasks">0</div><div class="stat-label serif-bn">আজকের কাজ</div></div>
+                </div>
 
+                <div class="dashboard-grid">
+                    <div>
+                        <h3 class="serif-bn text-gold" style="border-bottom: 1px solid var(--border-dim); padding-bottom: 8px; margin-bottom: 16px;">আজকের কাজ (Today's Tasks)</h3>
+                        <div id="dashboard-tasks" style="display: flex; flex-direction: column; gap: 10px;">
+                            <div class="empty-state" style="padding: 20px;">কোনো কাজ বাকি নেই।</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="serif-bn text-gold" style="border-bottom: 1px solid var(--border-dim); padding-bottom: 8px; margin-bottom: 16px;">সাম্প্রতিক (Recent Projects)</h3>
+                        <div id="dashboard-recent" style="display: flex; flex-direction: column; gap: 10px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    
+            <div id="view-category" class="view-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 class="serif-bn text-gold" id="category-title" style="font-size:28px;">প্রজেক্ট</h2>
+                    <button class="btn btn-gold" onclick="openProjectModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> নতুন প্রজেক্ট</button>
+                </div>
+                <div id="category-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                </div>
+            </div>
+
+            <div id="view-tasks" class="view-container">
+                <div class="watermark">ক</div>
+                <h2 class="serif-bn text-gold" style="font-size:28px; margin-bottom: 30px;">কাজের তালিকা</h2>
+                <div class="empty-state">এই বিভাগটি এখনও তৈরি হচ্ছে... (Coming Soon)</div>
+            </div>
+
+            <div id="view-editor" class="view-container" style="padding: 20px; max-width: none;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <div>
+                        <button class="btn btn-ghost" onclick="navigate('dashboard')" style="padding: 4px 8px; font-size: 12px;">← ফেরত যান</button>
+                        <span id="editor-project-title" class="serif-bn text-gold" style="margin-left: 16px; font-size: 20px;"></span>
+                    </div>
+                    <div class="serif-bn" style="font-size: 12px; color: var(--smoke);" id="save-status">সংরক্ষিত ✓</div>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="tree-panel">
+                        <div style="padding: 10px; border-bottom: 1px solid var(--border-dim); display:flex; justify-content: space-between;">
+                            <span class="serif-bn" style="color:var(--ash)">সূচিপত্র (Index)</span>
+                            <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 12px;" onclick="addChapter()">+ অধ্যায়</button>
+                        </div>
+                        <div id="editor-tree" style="flex:1; overflow-y: auto; padding: 10px 0;">
+                            </div>
+                    </div>
+
+                    <div class="editor-panel">
+                        <div class="editor-toolbar">
+                            <button onclick="document.execCommand('bold',false,null)"><b>B</b></button>
+                            <button onclick="document.execCommand('italic',false,null)"><i>I</i></button>
+                            <button onclick="document.execCommand('underline',false,null)"><u>U</u></button>
+                            <span style="width: 1px; background: var(--border-dim); margin: 0 4px;"></span>
+                            <button onclick="document.execCommand('justifyLeft',false,null)">Left</button>
+                            <button onclick="document.execCommand('justifyCenter',false,null)">Center</button>
+                            <span style="width: 1px; background: var(--border-dim); margin: 0 4px;"></span>
+                            <button onclick="insertCustomBlock('dialogue')" title="Dialogue" style="color: var(--gold)">💬 সংলাপ</button>
+                            <button onclick="insertCustomBlock('direction')" title="Direction" style="color: var(--ash)">🎬 ডিরেকশন</button>
+                            <button onclick="insertCustomBlock('sound')" title="Sound Cue" style="color: var(--video-teal-bright)">🎵 সাউন্ড</button>
+                            <span style="flex:1"></span>
+                            <span id="editor-word-count" style="font-size: 12px; color: var(--smoke); align-self: center; margin-right: 10px;">0 শব্দ</span>
+                        </div>
+                        <div id="rich-editor" class="editor-content lang-bn" contenteditable="true" spellcheck="false" data-placeholder="এখানে তোমার গল্প শুরু হোক..."></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-settings" class="view-container">
+                <h2 class="serif-bn text-gold" style="font-size:28px; margin-bottom: 30px;">সেটিংস</h2>
+                
+                <div style="max-width: 600px;">
+                    <div class="card" style="margin-bottom: 20px;">
+                        <h3 class="serif-bn text-gold" style="margin-bottom: 16px;">AI সেটিংস (Anthropic)</h3>
+                        <label>আপনার Anthropic API Key দিন:</label>
+                        <input type="password" id="setting-apikey" placeholder="sk-ant-...">
+                        <p style="font-size: 11px; color: var(--smoke); margin-top: -10px; margin-bottom: 16px;">*কি লোকাল স্টোরেজে সুরক্ষিত থাকে।</p>
+                        
+                        <label>AI রেসপন্স স্টাইল:</label>
+                        <select id="setting-aistyle">
+                            <option value="storyteller">Storyteller (Literary & Descriptive)</option>
+                            <option value="concise">Concise (Direct & Formatting Focus)</option>
+                        </select>
+                        <button class="btn btn-gold" onclick="saveSettings()">সেভ করুন</button>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="serif-bn text-gold" style="margin-bottom: 16px;">অ্যাপ সম্পর্কে (About)</h3>
+                        <p class="en-body" style="color: var(--ash); margin-bottom: 10px;">Golpoboliyer Kheror Khata v1.0</p>
+                        <p class="serif-bn" style="color: var(--text-secondary); font-style: italic;">"অন্ধকার, রহস্য, এবং না-বলা গল্পের একটি ব্যক্তিগত কমান্ড সেন্টার।"</p>
+                        <div class="alpona-divider" style="margin: 20px 0; width: 100%;"></div>
+                        <p class="serif-bn text-gold" style="font-size: 12px;">তৈরি করেছেন প্রেম দিয়ে।</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <button id="ai-trigger" onclick="toggleAI()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </button>
+
+        <div id="ai-drawer">
+            <div class="ai-header">
+                <div>
+                    <h3 class="serif-bn text-gold">গল্পের সহায়ক</h3>
+                    <div class="en-body" style="font-size:12px; color:var(--ash)">AI Writing Assistant</div>
+                </div>
+                <button class="btn btn-ghost" style="border:none" onclick="toggleAI()">✕</button>
+            </div>
+            
+            <div class="ai-body" id="ai-chat-history">
+                <div class="ai-msg msg-ai serif-bn">নমস্কার! আমি আপনার গল্পের সহায়ক। আজ কোন গল্প লিখবো আমরা?</div>
+            </div>
+
+            <div class="ai-footer">
+                <div class="ai-prompts">
+                    <button class="prompt-pill" onclick="sendAIPrompt('লেখাটি সুন্দর করে গুছিয়ে দাও।')">✍️ গুছিয়ে দাও</button>
+                    <button class="prompt-pill" onclick="sendAIPrompt('এর পরের অংশটা কী হতে পারে, তার ৩টি আইডিয়া দাও।')">💡 প্লট আইডিয়া</button>
+                    <button class="prompt-pill" onclick="sendAIPrompt('এই দৃশ্যটিকে অডিওবুক স্ক্রিপ্ট ফরম্যাটে (সাউন্ড কিউ সহ) সাজাও।')">🎙️ অডিওবুক ফরম্যাট</button>
+                    <button class="prompt-pill" onclick="sendAIPrompt('Translate this to English preserving the literary tone.')">🌐 Translate</button>
+                </div>
+                <div class="ai-input-area">
+                    <textarea id="ai-input" class="ai-textarea" placeholder="AI কে নির্দেশ দিন..."></textarea>
+                    <button class="btn btn-gold" style="padding: 0 16px;" onclick="handleAISubmit()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-project">
+        <div class="modal">
+            <h3 class="serif-bn text-gold" style="margin-bottom: 20px;" id="modal-project-title">নতুন প্রজেক্ট</h3>
+            
+            <label>প্রজেক্টের নাম (Bengali)</label>
+            <input type="text" id="proj-title-bn" placeholder="যেমন: বাংলার ভূত - পর্ব ১">
+            
+            <label>Project Name (English)</label>
+            <input type="text" id="proj-title-en" placeholder="e.g. Banglar Bhoot - Ep 1">
+            
+            <label>ধরন (Type)</label>
+            <select id="proj-type">
+                <option value="audiobook">অডিওবুক (Audiobook)</option>
+                <option value="novel">উপন্যাস (Novel)</option>
+                <option value="video">ভিডিও (Video Script)</option>
+                <option value="shorts">শর্টস (Shorts)</option>
+            </select>
+
+            <div style="display:flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-ghost" onclick="closeModals()">বাতিল</button>
+                <button class="btn btn-gold" onclick="saveProject()">সংরক্ষণ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- STATE MANAGEMENT --- */
+        const STORAGE_KEY = 'gkk_data';
+        let appData = {
+            version: "1.0",
+            settings: { apiKey: "", defaultLanguage: "bn", aiStyle: "storyteller" },
+            projects: [],
+            dailyWordCount: {}
+        };
+        
+        let currentProject = null;
+        let currentScene = null;
+        let activeCategory = 'dashboard';
+        let lastTrackedWordCount = 0; // Fixed word tracking
+
+        const QUOTES = [
+            "যেতে নাহি দিব হায়, তবু যেতে দিতে হয়... — রবীন্দ্রনাথ ঠাকুর",
+            "বহুদিন ধরে বহু ক্রোশ দূরে, বহু ব্যয় করি বহু দেশ ঘুরে... — রবীন্দ্রনাথ ঠাকুর",
+            "হাজার বছর ধরে আমি পথ হাঁটিতেছি পৃথিবীর পথে... — জীবনানন্দ দাশ",
+            "আমার পথ চলাতেই আনন্দ... — রবীন্দ্রনাথ ঠাকুর",
+            "গল্প হলেও সত্যি।",
+            "অন্ধকার ঘরে শুধু কলমের শব্দ... এটাই তো জীবন।",
+            "ভূত বলে কিছু নেই, আছে শুধু মনের ভয়... — শরদিন্দু বন্দ্যোপাধ্যায় (ব্যোমকেশ)",
+        ];
+
+        /* --- INITIALIZATION --- */
+        function initApp() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try { appData = JSON.parse(saved); } catch(e) { console.error("Data parse error"); }
+            }
+            
+            // Set daily quote
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            document.getElementById('daily-quote').innerText = QUOTES[dayOfYear % QUOTES.length];
+
+            // Render default view
+            navigate('dashboard');
+            setupEditorAutoSave();
+            registerPWA();
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        }
+
+        /* --- NAVIGATION & UI --- */
+        function navigate(view) {
+            // Update nav styles safely
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const navItem = document.querySelector(`.nav-item[data-view="${view}"]`);
+            if(navItem) navItem.classList.add('active');
+
+            // Hide all views
+            document.querySelectorAll('.view-container').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            activeCategory = view;
+
+            // Route handler
+            if (['audiobook', 'novel', 'video', 'shorts'].includes(view)) {
+                document.getElementById('view-category').classList.add('active');
+                renderCategory(view);
+            } else if (view === 'dashboard') {
+                document.getElementById('view-dashboard').classList.add('active');
+                renderDashboard();
+            } else if (view === 'tasks') {
+                document.getElementById('view-tasks').classList.add('active');
+            } else if (view === 'settings') {
+                document.getElementById('view-settings').classList.add('active');
+                document.getElementById('setting-apikey').value = appData.settings.apiKey || '';
+                document.getElementById('setting-aistyle').value = appData.settings.aiStyle || 'storyteller';
+            } else if (view === 'editor') {
+                document.getElementById('view-editor').classList.add('active');
+                renderEditor();
+            }
+
+            if(window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        /* --- DASHBOARD LOGIC --- */
+        function renderDashboard() {
+            document.getElementById('stat-projects').innerText = appData.projects.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('stat-words').innerText = appData.dailyWordCount[today] || 0;
+
+            const recentContainer = document.getElementById('dashboard-recent');
+            recentContainer.innerHTML = '';
+            
+            if (appData.projects.length === 0) {
+                recentContainer.innerHTML = `<div class="empty-state">এখনো কোনো গল্প শুরু হয়নি। নতুন প্রজেক্ট তৈরি করুন।</div>`;
+                return;
+            }
+
+            // Sort by updated (mock logic: just reverse for now)
+            const recent = [...appData.projects].reverse().slice(0, 4);
+            recent.forEach(p => {
+                recentContainer.innerHTML += `
+                    <div class="card" style="cursor:pointer" onclick="openProject('${p.id}')">
+                        <div class="type-bar bg-${p.type}"></div>
+                        <h4 class="serif-bn text-gold">${p.title_bn}</h4>
+                        <div class="en-body" style="font-size:12px; color:var(--ash)">${p.title_en}</div>
+                    </div>
+                `;
+            });
+        }
+
+        /* --- CATEGORY LOGIC --- */
+        function renderCategory(type) {
+            const titles = { audiobook: "অডিওবুক স্ক্রিপ্ট", novel: "উপন্যাস", video: "ভিডিও স্ক্রিপ্ট", shorts: "শর্টস" };
+            document.getElementById('category-title').innerText = titles[type];
+            
+            const grid = document.getElementById('category-grid');
+            grid.innerHTML = '';
+
+            const projs = appData.projects.filter(p => p.type === type);
+            if (projs.length === 0) {
+                grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1">এই বিভাগে কোনো খাতা নেই।</div>`;
+                return;
+            }
+
+            projs.forEach(p => {
+                grid.innerHTML += `
+                    <div class="card" style="cursor:pointer" onclick="openProject('${p.id}')">
+                        <div class="type-bar bg-${p.type}"></div>
+                        <h3 class="serif-bn text-gold" style="font-size: 20px;">${p.title_bn}</h3>
+                        <div class="en-body" style="color:var(--ash); margin-bottom: 12px;">${p.title_en}</div>
+                        <div style="font-size:12px; color:var(--smoke)">অধ্যায়: ${p.chapters.length}</div>
+                    </div>
+                `;
+            });
+        }
+
+        /* --- PROJECT MANAGEMENT --- */
+        function generateId() { return Math.random().toString(36).substr(2, 9); }
+
+        function openProjectModal() {
+            document.getElementById('modal-project').style.display = 'flex';
+            document.getElementById('proj-title-bn').value = '';
+            document.getElementById('proj-title-en').value = '';
+            if (['audiobook', 'novel', 'video', 'shorts'].includes(activeCategory)) {
+                document.getElementById('proj-type').value = activeCategory;
+            }
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none');
+        }
+
+        function saveProject() {
+            const pBn = document.getElementById('proj-title-bn').value || 'শিরোনামহীন';
+            const pEn = document.getElementById('proj-title-en').value || 'Untitled';
+            const pType = document.getElementById('proj-type').value;
+
+            const newProj = {
+                id: generateId(),
+                title_bn: pBn,
+                title_en: pEn,
+                type: pType,
+                chapters: [{
+                    id: generateId(),
+                    title: 'অধ্যায় ১',
+                    scenes: [{ id: generateId(), title: 'দৃশ্য ১', content: '' }]
+                }]
+            };
+
+            appData.projects.push(newProj);
+            saveData();
+            closeModals();
+            navigate(activeCategory); // Refresh view
+        }
+
+        /* --- EDITOR LOGIC --- */
+        function openProject(id) {
+            currentProject = appData.projects.find(p => p.id === id);
+            
+            // Fixed safety check for empty projects
+            if(currentProject && currentProject.chapters[0] && currentProject.chapters[0].scenes[0]) {
+                currentScene = currentProject.chapters[0].scenes[0];
+            } else {
+                currentScene = null;
+            }
+            navigate('editor');
+        }
+
+        function renderEditor() {
+            if(!currentProject) return;
+            document.getElementById('editor-project-title').innerText = currentProject.title_bn;
+            
+            // Render Tree
+            const tree = document.getElementById('editor-tree');
+            tree.innerHTML = '';
+            currentProject.chapters.forEach((ch, cIdx) => {
+                tree.innerHTML += `<div class="tree-item" style="color:var(--text-primary); font-family:var(--font-bn-serif); padding-top:16px;"><b>${ch.title}</b></div>`;
+                ch.scenes.forEach((sc, sIdx) => {
+                    const isActive = currentScene && currentScene.id === sc.id ? 'active' : '';
+                    tree.innerHTML += `
+                        <div class="tree-item ${isActive}" style="padding-left: 30px;" onclick="loadScene('${ch.id}', '${sc.id}')">
+                            <span>${sc.title}</span>
+                            <div class="status-dot"></div>
+                        </div>
+                    `;
+                });
+            });
+
+            // Load Content
+            if(currentScene) {
+                const editor = document.getElementById('rich-editor');
+                editor.innerHTML = currentScene.content;
+                
+                // Initialize word count base to prevent false inflation
+                const text = editor.innerText.trim();
+                lastTrackedWordCount = text ? text.split(/\s+/).length : 0;
+                updateWordCountDisplay();
+            }
+        }
+
+        function loadScene(chId, scId) {
+            // Save current before switching
+            saveCurrentSceneContent();
+            
+            const ch = currentProject.chapters.find(c => c.id === chId);
+            currentScene = ch.scenes.find(s => s.id === scId);
+            renderEditor();
+        }
+
+        function saveCurrentSceneContent() {
+            if(currentScene) {
+                const editor = document.getElementById('rich-editor');
+                currentScene.content = editor.innerHTML;
+                saveData();
+                showSaveStatus();
+            }
+        }
+
+        function updateWordCountDisplay() {
+            const text = document.getElementById('rich-editor').innerText.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('editor-word-count').innerText = `${words} শব্দ`;
+            return words;
+        }
+
+        function setupEditorAutoSave() {
+            const editor = document.getElementById('rich-editor');
+            
+            // Fixed Word Tracking Logic
+            editor.addEventListener('input', () => {
+                const currentWords = updateWordCountDisplay();
+                
+                // Track word addition cleanly (delta calculation)
+                const diff = currentWords - lastTrackedWordCount;
+                if (diff > 0) {
+                    const today = new Date().toISOString().split('T')[0];
+                    appData.dailyWordCount[today] = (appData.dailyWordCount[today] || 0) + diff;
+                }
+                lastTrackedWordCount = currentWords;
+            });
+
+            setInterval(() => {
+                if(currentProject && document.getElementById('view-editor').classList.contains('active')) {
+                    saveCurrentSceneContent();
+                }
+            }, 15000); // 15s autosave
+        }
+
+        function showSaveStatus() {
+            const st = document.getElementById('save-status');
+            st.style.opacity = '1';
+            setTimeout(() => { st.style.opacity = '0.5'; }, 2000);
+        }
+
+        function insertCustomBlock(type) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const range = selection.getRangeAt(0);
+            const content = range.extractContents();
+            
+            let wrapper = document.createElement('div');
+            
+            if(type === 'dialogue') {
+                wrapper = document.createElement('blockquote');
+                wrapper.className = 'dialogue';
+                const name = prompt("চরিত্রের নাম (Character Name):", "Name");
+                if(name) {
+                    wrapper.innerHTML = `<strong class="text-gold" style="font-size:12px; text-transform:uppercase;">${name}</strong><br>`;
+                }
+            } else if (type === 'direction') {
+                wrapper.className = 'direction';
+                wrapper.innerHTML = `[ `;
+            } else if (type === 'sound') {
+                wrapper.className = 'sound-cue';
+                wrapper.innerHTML = `SFX: `;
+            }
+
+            if(content.textContent.trim() === '') {
+                wrapper.innerHTML += (type==='sound'? 'Sound description' : 'Text...');
+            } else {
+                wrapper.appendChild(content);
+            }
+            if(type==='direction') wrapper.innerHTML += ` ]`;
+
+            range.insertNode(wrapper);
+            
+            // Move cursor after inserted block
+            const newRange = document.createRange();
+            newRange.setStartAfter(wrapper);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+        }
+
+        function addChapter() {
+            if(!currentProject) return;
+            currentProject.chapters.push({
+                id: generateId(),
+                title: `অধ্যায় ${currentProject.chapters.length + 1}`,
+                scenes: [{ id: generateId(), title: 'দৃশ্য ১', content: '' }]
+            });
+            saveData();
+            renderEditor();
+        }
+
+        /* --- SETTINGS --- */
+        function saveSettings() {
+            appData.settings.apiKey = document.getElementById('setting-apikey').value;
+            appData.settings.aiStyle = document.getElementById('setting-aistyle').value;
+            saveData();
+            alert("সেটিংস সংরক্ষিত হয়েছে। (Settings Saved)");
+        }
+
+        /* --- AI ASSISTANT LOGIC --- */
+        function toggleAI() {
+            document.getElementById('ai-drawer').classList.toggle('open');
+        }
+
+        function appendAIMessage(text, isUser) {
+            const chat = document.getElementById('ai-chat-history');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `ai-msg ${isUser ? 'msg-user' : 'msg-ai'} ${/[a-zA-Z]/.test(text) && !/[অ-হ]/.test(text) ? 'en-body' : 'serif-bn'}`;
+            // Simple markdown bolding support
+            msgDiv.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function sendAIPrompt(text) {
+            document.getElementById('ai-input').value = text;
+            handleAISubmit();
+        }
+
+        async function handleAISubmit() {
+            const inputEl = document.getElementById('ai-input');
+            const text = inputEl.value.trim();
+            if(!text) return;
+            
+            const apiKey = appData.settings.apiKey;
+            if(!apiKey) {
+                alert("AI ব্যবহার করতে Settings থেকে Anthropic API Key দিন।");
+                toggleAI(); navigate('settings');
+                return;
+            }
+
+            appendAIMessage(text, true);
+            inputEl.value = '';
+            
+            // Thinking indicator
+            const thinkingId = 'think-' + Date.now();
+            const chat = document.getElementById('ai-chat-history');
+            chat.innerHTML += `<div id="${thinkingId}" class="ai-msg msg-ai serif-bn text-gold" style="opacity:0.7">AI ভাবছে...</div>`;
+            chat.scrollTop = chat.scrollHeight;
+
+            // Prepare context
+            let contextText = "";
+            if (currentScene && document.getElementById('view-editor').classList.contains('active')) {
+                contextText = `Current Scene Context:\n${document.getElementById('rich-editor').innerText.substring(0, 2000)}\n\n`;
+            }
+
+            const systemPrompt = `You are "গল্পের সহায়ক" (Story Assistant), an expert AI writing companion for a Bengali content creator. You are a master of Bengali gothic fiction and literary traditions. Respond in the language of the user's prompt. Be literary, atmospheric, and professional. Format audio/video scripts properly if asked.\n\n${contextText}`;
+
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01',
+                        'content-type': 'application/json',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-3-5-sonnet-20240620',
+                        max_tokens: 1024,
+                        system: systemPrompt,
+                        messages: [{ role: 'user', content: text }]
+                    })
+                });
+
+                document.getElementById(thinkingId).remove();
+
+                if(response.ok) {
+                    const data = await response.json();
+                    appendAIMessage(data.content[0].text, false);
+                } else {
+                    const err = await response.json();
+                    appendAIMessage(`Error: ${err.error?.message || 'Failed to connect.'}`, false);
+                }
+            } catch (error) {
+                document.getElementById(thinkingId).remove();
+                appendAIMessage("ইন্টারনেট সংযোগ নেই বা API ত্রুটি ঘটেছে। (Connection Error)", false);
+            }
+        }
+
+        /* --- PWA SETUP --- */
+        function registerPWA() {
+            const manifest = {
+                name: "গল্পবলিয়ের খেরোর খাতা",
+                short_name: "খেরোর খাতা",
+                start_url: ".",
+                display: "standalone",
+                background_color: "#080604",
+                theme_color: "#080604",
+                icons: [{
+                    src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzg5MzJhIiBzdHJva2Utd2lkdGg9IjIiPjxwb2x5Z29uIHBvaW50cz0iMTIgMiAyIDIyIDIyIDIyIDEyIDIiLz48L3N2Zz4=",
+                    sizes: "192x192",
+                    type: "image/svg+xml"
+                }]
+            };
+            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            const link = document.createElement('link');
+            link.rel = 'manifest';
+            link.href = manifestURL;
+            document.head.appendChild(link);
+
+            // Fixed Service Worker pass-through to avoid fetch failures breaking components
+            const swCode = `
+                self.addEventListener('install', (e) => { self.skipWaiting(); });
+                self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
+                self.addEventListener('fetch', (e) => {
+                    // Standard pass-through to ensure Anthropic API & normal requests do not get hijacked loosely
+                });
+            `;
+            const swBlob = new Blob([swCode], {type: 'application/javascript'});
+            const swURL = URL.createObjectURL(swBlob);
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register(swURL).catch(console.error);
+            }
+        }
+
+        // Run Init
+        window.onload = initApp;
+
+    </script>
+</body>
+</html>
