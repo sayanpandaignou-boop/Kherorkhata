@@ -1442,7 +1442,173 @@
         // Run Init
         window.onload = initApp;
 
+                /* ========================================================================
+           CHUNK 3: THE FINAL POLISH (UX, Context Menus, Missing Tools)
+        ======================================================================== */
+
+        // 1. Context Menu Logic (Right Click / Long Press)
+        let longPressTimer;
+        const ctxMenu = document.getElementById('custom-context-menu');
+
+        function setupContextMenu(el, type, chId, scId = null) {
+            // Desktop Right Click
+            el.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                showContextMenu(e.pageX, e.pageY, type, chId, scId);
+            });
+            // Mobile Long Press
+            el.addEventListener('touchstart', (e) => {
+                longPressTimer = setTimeout(() => {
+                    const touch = e.touches[0];
+                    showContextMenu(touch.pageX, touch.pageY, type, chId, scId);
+                }, 600); // 600ms hold
+            });
+            el.addEventListener('touchend', () => clearTimeout(longPressTimer));
+            el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
+        }
+
+        function showContextMenu(x, y, type, chId, scId) {
+            contextTarget = { type, chId, scId };
+            ctxMenu.style.display = 'block';
+            ctxMenu.style.left = `${x}px`;
+            ctxMenu.style.top = `${y}px`;
+        }
+
+        // Hide context menu on click elsewhere
+        document.addEventListener('click', (e) => { if(e.target !== ctxMenu) ctxMenu.style.display = 'none'; });
+
+        function execContextMenu(action) {
+            if(!contextTarget) return;
+            const { type, chId, scId } = contextTarget;
+            const ch = currentProject.chapters.find(c => c.id === chId);
+
+            if(action === 'rename') {
+                renameItem(type, chId, scId);
+            } else if (action === 'delete') {
+                promptDelete(type, chId, scId);
+            } else if (action === 'duplicate') {
+                if(type === 'scene') {
+                    const sc = ch.scenes.find(s => s.id === scId);
+                    ch.scenes.push({...sc, id: generateId(), title: sc.title + ' (কপি)'});
+                } else if (type === 'chapter') {
+                    const newCh = JSON.parse(JSON.stringify(ch)); // Deep copy
+                    newCh.id = generateId(); newCh.title += ' (কপি)';
+                    newCh.scenes.forEach(s => s.id = generateId());
+                    currentProject.chapters.push(newCh);
+                }
+                saveData(); renderEditor();
+            } else if (action === 'add_below') {
+                addScene(chId);
+            }
+            ctxMenu.style.display = 'none';
+        }
+
+        // 2. Add missing formatting tools to the Editor Toolbar dynamically
+        window.addEventListener('DOMContentLoaded', () => {
+            const toolbar = document.querySelector('.editor-toolbar');
+            if(toolbar) {
+                const listTools = document.createElement('div');
+                listTools.style.display = 'flex'; listTools.style.gap = '8px';
+                listTools.innerHTML = `
+                    <div class="toolbar-divider"></div>
+                    <button onclick="formatDoc('insertUnorderedList')" title="Bullet List">• তালিকা</button>
+                    <button onclick="formatDoc('insertOrderedList')" title="Numbered List">১. তালিকা</button>
+                    <button onclick="formatDoc('insertHorizontalRule')" title="Divider">---</button>
+                    <div class="toolbar-divider"></div>
+                    <button onclick="formatDoc('undo')" title="Undo">↩</button>
+                    <button onclick="formatDoc('redo')" title="Redo">↪</button>
+                `;
+                // Insert right after the alignment buttons
+                toolbar.insertBefore(listTools, toolbar.children[8]); 
+            }
+        });
+
+        // 3. Ink Drop Animation on Navigation
+        const originalNavigate = navigate;
+        navigate = function(view, event) {
+            const ink = document.getElementById('ink-transition');
+            if (event && ink) {
+                ink.style.left = event.clientX + 'px';
+                ink.style.top = event.clientY + 'px';
+                ink.style.opacity = '1';
+                ink.style.transform = 'translate(-50%, -50%) scale(200)';
+                
+                setTimeout(() => {
+                    originalNavigate(view);
+                    ink.style.opacity = '0';
+                    ink.style.transform = 'translate(-50%, -50%) scale(0)';
+                }, 300);
+            } else {
+                originalNavigate(view);
+            }
+        };
+
+        // 4. Reveal Mobile Bottom Nav if on mobile screen
+        function checkMobileNav() {
+            const mobNav = document.getElementById('mobile-bottom-nav');
+            if (window.innerWidth <= 768) mobNav.style.display = 'flex';
+            else mobNav.style.display = 'none';
+        }
+        window.addEventListener('resize', checkMobileNav);
+        checkMobileNav(); // Run on load
+
+        // 5. Connect context menu to the tree items (Patching renderEditor from Chunk 2)
+        const originalRenderEditor = renderEditor;
+        renderEditor = function() {
+            originalRenderEditor(); // Run the base render
+            // Attach event listeners to the newly rendered tree items
+            if(!currentProject) return;
+            const tree = document.getElementById('editor-tree');
+            if(!tree) return;
+            
+            // Re-render tree items with Context Menu binding
+            let htmlNodes = tree.querySelectorAll('.tree-item');
+            htmlNodes.forEach(node => {
+                // Determine if it's a chapter or scene based on padding/structure
+                if(node.style.paddingLeft === '30px') {
+                    // It's a scene - we need its chId and scId (extracting from the onclick attribute is a bit hacky, 
+                    // but effective for patching without rewriting the whole render function)
+                    const onclickStr = node.querySelector('span').getAttribute('onclick');
+                    const match = onclickStr.match(/'([^']+)',\s*'([^']+)'/);
+                    if(match) setupContextMenu(node, 'scene', match[1], match[2]);
+                } else {
+                    // It's a chapter
+                    const ondblStr = node.querySelector('span').getAttribute('ondblclick');
+                    if(ondblStr) {
+                        const match = ondblStr.match(/'([^']+)'/g); // ['chapter', 'chId']
+                        if(match && match[1]) setupContextMenu(node, 'chapter', match[1].replace(/'/g, ''));
+                    }
+                }
+            });
+        };
+        
+
     </script>
+            <div id="custom-context-menu" style="display:none; position:fixed; background:var(--parchment-light); border:1px solid var(--border-glow); box-shadow:0 10px 30px rgba(0,0,0,0.8); border-radius:2px; z-index:9999; min-width:150px; padding:8px 0;">
+        <div class="tree-item" onclick="execContextMenu('rename')">✏️ নাম পরিবর্তন (Rename)</div>
+        <div class="tree-item" onclick="execContextMenu('duplicate')">📄 প্রতিলিপি (Duplicate)</div>
+        <div class="tree-item" onclick="execContextMenu('add_below')">⬇️ নিচে দৃশ্য যোগ করুন</div>
+        <div style="height:1px; background:var(--border-dim); margin:4px 0;"></div>
+        <div class="tree-item text-crimson" onclick="execContextMenu('delete')">🗑️ মুছে ফেলুন (Delete)</div>
+    </div>
+
+    <div id="mobile-bottom-nav" style="display:none; position:fixed; bottom:0; width:100%; background:var(--parchment-dark); border-top:1px solid var(--border-dim); z-index:900; padding:12px 0; justify-content:space-around; box-shadow:0 -5px 20px rgba(0,0,0,0.5);">
+        <button class="btn btn-ghost" style="border:none; color:var(--gold);" onclick="navigate('dashboard')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        </button>
+        <button class="btn btn-ghost" style="border:none;" onclick="if(currentProject) navigate('editor'); else alert('কোনো খাতা খোলা নেই!');">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+        </button>
+        <button class="btn btn-ghost" style="border:none;" onclick="navigate('tasks')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        </button>
+        <button class="btn btn-ghost" style="border:none; color:var(--gold-dim);" onclick="toggleAI()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </button>
+    </div>
+
+    <div id="ink-transition" style="position:fixed; top:50%; left:50%; width:10px; height:10px; background:var(--ink); border-radius:50%; transform:translate(-50%, -50%) scale(0); z-index:9998; pointer-events:none; transition:transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); opacity:0;"></div>
+
 </body>
 </html>
 
